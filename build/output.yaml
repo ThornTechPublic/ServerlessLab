@@ -1,0 +1,96 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM Tutorial
+Parameters:
+  Environment:
+    Type: String
+Resources:
+  HelloAPI:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName:
+        Fn::Sub: ${Environment}
+      DefinitionBody:
+        swagger: 2.0
+        info:
+          title:
+            Ref: AWS::StackName
+        x-amazon-apigateway-binary-media-types:
+        - '*/*'
+        paths:
+          /test:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${HelloLambda.Arn}/invocations
+              responses: {}
+  HelloLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName:
+        Fn::Sub: HelloLambda-${Environment}
+      Handler: index.lambda_handler
+      Runtime: python2.7
+      CodeUri: s3://sam-tutorial-dev-90210-rob-chen/de0194b9c3ff1cafd78a542c7d816e3e
+      MemorySize: 128
+      Timeout: 30
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AmazonDynamoDBFullAccess
+      Events:
+        MyEndpoint:
+          Type: Api
+          Properties:
+            Path: /test
+            Method: get
+            RestApiId:
+              Ref: HelloAPI
+      Environment:
+        Variables:
+          MyTableName:
+            Ref: HelloTable
+  HelloTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: name
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+  S3BucketWebsite:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+        - Sid: PublicReadForGetBucketObjects
+          Effect: Allow
+          Principal: '*'
+          Action: s3:GetObject
+          Resource:
+            Fn::Sub: arn:aws:s3:::${S3BucketWebsite}/*
+      Bucket:
+        Ref: S3BucketWebsite
+Outputs:
+  WebsiteURL:
+    Value:
+      Fn::GetAtt:
+      - S3BucketWebsite
+      - WebsiteURL
+    Description: URL for website hosted on S3
+  WebsiteBucket:
+    Value:
+      Ref: S3BucketWebsite
+  ApiGWURL:
+    Value:
+      Fn::Sub: https://${HelloAPI}.execute-api.${AWS::Region}.amazonaws.com/${Environment}/test
+    Description: API Gateway endpoint
