@@ -32,7 +32,7 @@ function usage {
 # Default stage to dev
 STAGE=${STAGE:-dev}
 # Append stage to project
-PROJECT=sam-tutorial-$STAGE
+PROJECT=sam-tutorial-$STAGE-$UNIQUE_SUFFIX
 
 # Set profile if it was provided
 if [[ -n ${PROFILE} ]]; then

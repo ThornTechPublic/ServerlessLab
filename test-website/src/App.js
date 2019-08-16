@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-const endpoint = 'https://4omdsdcjjj.execute-api.us-east-1.amazonaws.com/dev/test'
+const endpoint = 'https://4omdsdcjjj.execute-api.us-east-1.amazonaws.com/dev/test';
 
 class App extends Component {
   constructor() {
