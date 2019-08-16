@@ -13,6 +13,6 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-    "deploy": "aws s3 sync build/ s3://sam-tutorial-dev-s3bucketwebsite-gtr818lea4w7 --profile robtest"
+    "deploy": "aws s3 sync build/ s3://sam-tutorial-dev-s3bucketwebsite-gtr818lea4w7"
   }
 }
