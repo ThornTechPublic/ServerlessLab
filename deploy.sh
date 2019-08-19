@@ -32,7 +32,7 @@ function usage {
 # Default stage to dev
 STAGE=${STAGE:-dev}
 # Append stage to project
-PROJECT=sam-tutorial-$STAGE-$UNIQUE_SUFFIX
+PROJECT=sam-tutorial-$STAGE
 
 # Set profile if it was provided
 if [[ -n ${PROFILE} ]]; then
@@ -53,7 +53,7 @@ rm -rf build
 mkdir build
 
 # make the deployment bucket in case it doesn't exist
-aws s3 mb s3://$BUCKET
+aws s3 mb s3://$BUCKET --region ${AWS_REGION}
 
 # generate next stage yaml file
 aws cloudformation package                   \
