@@ -65,7 +65,7 @@ aws cloudformation package                   \
 # the actual deployment step
 aws cloudformation deploy                     \
     --template-file build/output.yaml         \
-    --stack-name $PROJECT                     \
+    --stack-name $BUCKET                     \
     --capabilities CAPABILITY_IAM             \
     --parameter-overrides Environment=$STAGE  \
     --region ${AWS_REGION}
